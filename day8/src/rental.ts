@@ -48,7 +48,7 @@
  * vehicle // relationship ---> rentalRecord HAS-A vehicle
  * days - like for how many days
  * total price
- * status  "active" | "inactive"
+ * status  "active" | "completed" | "cancelled" | "inActive"
  *
  * Cancel() ---> status inactive
  * confirm() --> status active
@@ -60,7 +60,6 @@
 
 type VehicleType = "Bike" | "Car"; // later we can add more vehicle type
 
-
 class Vehicle {
   constructor(
     public readonly id: string,
@@ -71,16 +70,66 @@ class Vehicle {
   ) {}
 
   isAvailable(): boolean {
-      return this.available === true
+    return this.available === true;
   }
 
   makeAvailable(): void {
-      this.available = true
+    this.available = true;
   }
 
   rent(): void {
-      this.available = false
+    this.available = false;
   }
 }
 
+class Customer {
+  private rentalRecords = [];
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+  ) {}
 
+  addRental(): void {}
+  getRentalRecords() {}
+}
+
+type RentalStatus = "Active" | "Completed" | "Cancelled";
+class RentalRecords {
+  constructor(
+    public readonly id: string,
+    public customer: Customer,
+    public vehicle: Vehicle,
+    public days: number,
+    public totalPrice: number = 0,
+    public rentalStatus: RentalStatus = "Active",
+  ) {}
+
+  calculateTotal() {}
+  getRentalStatus() {}
+  cancelRenting() {}
+  confirmRenting() {}
+}
+
+class RentalCompany {
+  vehicles: Map<string, Vehicle> = new Map();
+  RentalRecords: Map<string, RentalRecords> = new Map();
+
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+  ) {}
+
+  addVehicle(vehicle: Vehicle) {}
+  removeVehicle(vehicleId: string) {}
+  findVehicle(vehicleId: string) {}
+
+  createRental(customer: Customer, vehicleId: string, days: number) {} // ---> it will create rental record
+  completeRental(rentalId: string) {} // --> when someone returns the vehicle we have to make the status of rental complete and make the vehicle available
+  cancelRental(rentalId: string) {} //  --> if someone dont want to rent and cancel the rental booking
+  findRental(rentalId: string) {} //  --> to find the record
+
+  getAvailableVehicle() {} // ---> returns vehicles whose status is true
+  getAvailableVehicleByType(type: VehicleType) {}
+}
+
+export { Customer, RentalCompany, RentalRecords, Vehicle };
