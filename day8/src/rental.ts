@@ -83,14 +83,18 @@ class Vehicle {
 }
 
 class Customer {
-  private rentalRecords = [];
+  private rentalRecords: RentalRecords[] = [];
   constructor(
     public readonly id: string,
     public readonly name: string,
   ) {}
 
-  addRental(): void {}
-  getRentalRecords() {}
+  addRental(newRentalRecord: RentalRecords): void {
+    this.rentalRecords.push(newRentalRecord);
+  }
+  getRentalRecords() {
+    console.log(this.rentalRecords);
+  }
 }
 
 type RentalStatus = "Active" | "Completed" | "Cancelled";
@@ -104,10 +108,20 @@ class RentalRecords {
     public rentalStatus: RentalStatus = "Active",
   ) {}
 
-  calculateTotal() {}
-  getRentalStatus() {}
-  cancelRenting() {}
-  confirmRenting() {}
+  calculateTotal() {
+    this.totalPrice = this.days * this.vehicle.pricePerDay;
+  }
+  getRentalStatus() {
+    return this.rentalStatus;
+  }
+  cancelRenting() {
+    this.rentalStatus = "Cancelled";
+    this.vehicle.makeAvailable();
+  }
+  confirmRenting() {
+    this.rentalStatus = "Completed";
+    this.vehicle.makeAvailable();
+  }
 }
 
 class RentalCompany {
@@ -119,17 +133,81 @@ class RentalCompany {
     public readonly name: string,
   ) {}
 
-  addVehicle(vehicle: Vehicle) {}
-  removeVehicle(vehicleId: string) {}
-  findVehicle(vehicleId: string) {}
+  addVehicle(vehicle: Vehicle) {
+    this.vehicles.set(vehicle.id, vehicle);
+  }
+  removeVehicle(vehicleId: string) {
+    this.vehicles.delete(vehicleId);
+  }
+  findVehicle(vehicleId: string) {
+    console.log(this.vehicles.get(vehicleId));
+  }
 
-  createRental(customer: Customer, vehicleId: string, days: number) {} // ---> it will create rental record
-  completeRental(rentalId: string) {} // --> when someone returns the vehicle we have to make the status of rental complete and make the vehicle available
-  cancelRental(rentalId: string) {} //  --> if someone dont want to rent and cancel the rental booking
-  findRental(rentalId: string) {} //  --> to find the record
+  createRental(customer: Customer, vehicleId: string, days: number) {
+    // first we gonna get the vehicle details like is it available or not
+    const vehicle = this.vehicles.get(vehicleId);
+    if (!vehicle) {
+      console.log("Vehicle not found"); // or you can through error
+      return;
+    }
 
-  getAvailableVehicle() {} // ---> returns vehicles whose status is true
-  getAvailableVehicleByType(type: VehicleType) {}
+    if (!vehicle.isAvailable()) {
+      console.log(` currently ${vehicle.name} is unavailable`);
+      return;
+    }
+
+    // days must be more than 0
+    if (days < 1) {
+      console.log(" vehicle is not available for this period");
+      return;
+    }
+
+    vehicle.rent(); // it will create status of the vehicle unavailable
+    const newRentalRecord = new RentalRecords(
+      `${vehicle.id}-${customer.name}`,
+      customer,
+      vehicle,
+      days,
+    );
+
+    this.RentalRecords.set(newRentalRecord.id, newRentalRecord);
+    customer.addRental(newRentalRecord); // we also have to show it to the customer side
+
+    console.log("booking completed : ", newRentalRecord);
+  } // ---> it will create rental record
+  completeRental(rentalId: string) {
+    const rentalRecord = this.RentalRecords.get(rentalId);
+    if (!rentalRecord) {
+      console.log(`no record found with this ${rentalId} id`);
+      return;
+    }
+    rentalRecord.confirmRenting();
+  } // --> when someone returns the vehicle we have to make the status of rental complete and make the vehicle available
+  cancelRental(rentalId: string) {
+    const rentalRecord = this.RentalRecords.get(rentalId);
+    if (!rentalRecord) {
+      console.log(`no record found with this ${rentalId} id`);
+      return;
+    }
+    rentalRecord.cancelRenting();
+  } //  --> if someone dont want to rent and cancel the rental booking
+  findRental(rentalId: string) {
+    const rentalRecord = this.RentalRecords.get(rentalId);
+    console.log(rentalRecord);
+  } //  --> to find the record
+
+  getAvailableVehicle() {
+    const availableVehicles = [...this.vehicles.values()].filter((vehicle) =>
+      vehicle.isAvailable(),
+    );
+    console.log(availableVehicles);
+  } // ---> returns vehicles whose status is true
+  getAvailableVehicleByType(type: VehicleType) {
+    const availableVehiclesByType = [...this.vehicles.values()].filter(
+      (vehicle) => vehicle.type === type,
+    );
+    console.log(availableVehiclesByType);
+  }
 }
 
 export { Customer, RentalCompany, RentalRecords, Vehicle };
