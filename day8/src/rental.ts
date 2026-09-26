@@ -84,10 +84,20 @@ class Vehicle {
 
 class Customer {
   private rentalRecords: RentalRecords[] = [];
+    totalBill : number = 0
   constructor(
     public readonly id: string,
     public readonly name: string,
   ) {}
+
+  getTotal(){
+    this.totalBill = this.rentalRecords.reduce((total , rental)=>{
+            total += rental.calculateTotal()
+            return total
+
+    },0)
+    return this.totalBill
+  }
 
   addRental(newRentalRecord: RentalRecords): void {
     this.rentalRecords.push(newRentalRecord);
@@ -106,10 +116,12 @@ class RentalRecords {
     public days: number,
     public totalPrice: number = 0,
     public rentalStatus: RentalStatus = "Active",
-  ) {}
+  ) {
+    this.totalPrice = days * vehicle.pricePerDay
+  }
 
   calculateTotal() {
-    this.totalPrice = this.days * this.vehicle.pricePerDay;
+   return this.totalPrice = this.days * this.vehicle.pricePerDay;
   }
   getRentalStatus() {
     return this.rentalStatus;
@@ -169,6 +181,7 @@ class RentalCompany {
       vehicle,
       days,
     );
+    // newRentalRecord.calculateTotal() we can do this or we can just init the value in the constructor
 
     this.RentalRecords.set(newRentalRecord.id, newRentalRecord);
     customer.addRental(newRentalRecord); // we also have to show it to the customer side
@@ -206,7 +219,7 @@ class RentalCompany {
     const availableVehiclesByType = [...this.vehicles.values()].filter(
       (vehicle) => vehicle.type === type,
     );
-    console.log(availableVehiclesByType);
+    console.log(`available ${type} found :`, availableVehiclesByType);
   }
 }
 
