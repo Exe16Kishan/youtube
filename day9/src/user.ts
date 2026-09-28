@@ -3,7 +3,9 @@ class User {
     private readonly id: string,
     public readonly username: string,
     public readonly displayName: string,
-  ) {}
+  ) {
+    
+  }
 }
 
 export {

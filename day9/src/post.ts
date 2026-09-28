@@ -1,10 +1,10 @@
 import { User } from "./user";
 
 type PostData = {
-    id:string ,
-    body:string ,
-    createdBy : User
-}
+  id: string;
+  body: string;
+  createdBy: User;
+};
 abstract class Post {
   constructor(
     public id: string,
@@ -27,9 +27,14 @@ class Question extends Post {
     this.comments = new Map();
   }
 
-  addAnswer(Answer: Answer) {}
+  addAnswer(newAnswer: Answer) {
+    this.answers.set(newAnswer.id, newAnswer)
+    
+  }
 
-  addComment(Comment: Comment) {}
+  addComment(newComment: Comment) {
+    this.comments.set(newComment.id,newComment)
+  }
 }
 
 class Answer extends Post {
@@ -38,8 +43,8 @@ class Answer extends Post {
     super(data.id, data.body, data.createdBy);
     this.comments = new Map();
   }
-  addComment(Comment: Comment) {
-    const newComment = new Comment()
+  addComment(newComment: Comment) {
+    this.comments.set(newComment.id, newComment);
   }
 }
 
