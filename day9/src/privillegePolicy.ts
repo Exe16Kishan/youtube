@@ -9,4 +9,5 @@ class PrivillegePolicy {
   validateVote(user: User, post: Post, VoteType: VoteType) {}
 }
 
+
 export { PrivillegePolicy };
