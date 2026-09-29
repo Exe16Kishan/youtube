@@ -36,7 +36,6 @@ system.addCommentToAnswer("q-1","a-3","no this is not the perfect definition",ki
 console.dir(system.questions,{ depth: null, colors: true }) 
 
 
-// its working 
 
 
-//// at every runtime its changing to new id as we can see its not persistent
+

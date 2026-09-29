@@ -1,6 +1,7 @@
 import { randomUUIDv7 } from "crypto";
 import { Answer, Comment, Question } from "./post";
 import { User } from "./user";
+import { VoteType } from "../types";
 
 
 let count = 1
@@ -88,6 +89,15 @@ class StackOverFlow {
     });
     answer.addComment(newComment);
   }
+
+  voteQuestion(questionId : string , voter : User , VoteType :VoteType){}
+  voteAnswer(questionId:string , answerId:string , voter :User ,VoteType:VoteType ){}
+  voteQuestionComment(questionId:string , commentId:string , voter:User , VoteType:VoteType){}
+  voteAnswerComment(questionId:string , answerId:string , voter:User , VoteType:VoteType){}
+  acceptAnswer(questionId:string , answerId:string , questionOwner:User){}
+  unacceptAnswer(questionId:string,questionOwner:User){}
+
+
 }
 
 export { StackOverFlow };
