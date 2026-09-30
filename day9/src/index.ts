@@ -1,6 +1,7 @@
 import { Question } from "./post"
 import { PrivillegePolicy } from "./privillegePolicy"
 import { StackOverFlow } from "./stackoverFlow"
+import { Tag } from "./tags"
 import { User } from "./user"
 
 console.log("stack overflowwww")
@@ -20,12 +21,13 @@ const aman = system.createUser("aman")
 // create some questions
 const title = "what is lld ?"
 const body = "i m confused so i am asking this "
-const question1 = system.createQuestion(title,body,kishan)
+
+const question1 = system.createQuestion(title,body,kishan,[new Tag("lld"), new Tag("solution")])
 console.log(question1)
 
 const title2 = "what is hld ?"
 const body2 = "i m confused so i am asking this "
-const question2 = system.createQuestion(title2,body2,aman)
+const question2 = system.createQuestion(title2,body2,aman,[new Tag("lld"), new Tag("solution")])
 
 
 // lets add some answer

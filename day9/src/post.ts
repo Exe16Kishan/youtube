@@ -42,23 +42,28 @@ abstract class Post {
     }
   }
   getScore() {
-    const score = [...this.votes.values()].reduce((total , vote)=>total += vote,0)
-    console.log(score)
+    const score = [...this.votes.values()].reduce(
+      (total, vote) => (total += vote),
+      0,
+    );
+    console.log(score);
   }
 }
 
 class Question extends Post {
   public answers: Map<string, Answer>;
   public comments: Map<string, Comment>;
-  public tags: Set<Tag> = new Set();
+  public tags: Set<Tag>;
   acceptedAnswerId: string | null = null;
   constructor(
     public title: string,
     public data: PostData,
+    tags: Tag[],
   ) {
     super(data.id, data.body, data.createdBy);
     this.answers = new Map();
     this.comments = new Map();
+    this.tags = new Set(tags);
   }
 
   addAnswer(newAnswer: Answer) {

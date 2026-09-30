@@ -3,6 +3,7 @@ import { VoteType } from "../types";
 import { Answer, Comment, Question } from "./post";
 import { PrivillegePolicy } from "./privillegePolicy";
 import { User } from "./user";
+import { Tag } from "./tags";
 
 let count = 1;
 class StackOverFlow {
@@ -22,7 +23,7 @@ class StackOverFlow {
     return newUser;
   }
 
-  createQuestion(title: string, body: string, author: User) {
+  createQuestion(title: string, body: string, author: User,tag : Tag[]) {
     const questionId = `q-${count}`;
     count += 1;
 
@@ -30,7 +31,7 @@ class StackOverFlow {
       id: questionId,
       body: body,
       createdBy: author,
-    });
+    },tag);
     this.questions.set(questionId, newQuestion);
     return newQuestion;
   }
