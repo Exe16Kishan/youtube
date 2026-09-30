@@ -2,8 +2,8 @@ import { randomUUIDv7 } from "crypto";
 import { VoteType } from "../types";
 import { Answer, Comment, Question } from "./post";
 import { PrivillegePolicy } from "./privillegePolicy";
-import { User } from "./user";
 import { Tag } from "./tags";
+import { User } from "./user";
 
 let count = 1;
 class StackOverFlow {
@@ -23,15 +23,19 @@ class StackOverFlow {
     return newUser;
   }
 
-  createQuestion(title: string, body: string, author: User,tag : Tag[]) {
+  createQuestion(title: string, body: string, author: User, tag: Tag[]) {
     const questionId = `q-${count}`;
     count += 1;
 
-    const newQuestion = new Question(title, {
-      id: questionId,
-      body: body,
-      createdBy: author,
-    },tag);
+    const newQuestion = new Question(
+      title,
+      {
+        id: questionId,
+        body: body,
+        createdBy: author,
+      },
+      tag,
+    );
     this.questions.set(questionId, newQuestion);
     return newQuestion;
   }
@@ -53,6 +57,10 @@ class StackOverFlow {
     const question = this.questions.get(questionId);
     if (!question) {
       console.log(" question not exists");
+      return;
+    }
+    if (!this.policy.validateComment(author, question)) {
+      console.log("cannot vote");
       return;
     }
     const commentId = `cq-${count}`;
@@ -82,6 +90,10 @@ class StackOverFlow {
     const answer = question.answers.get(answerId);
     if (!answer) {
       console.log("answer not found");
+      return;
+    }
+    if (!this.policy.validateComment(author, answer)) {
+      console.log("cannot vote");
       return;
     }
 
@@ -125,7 +137,6 @@ class StackOverFlow {
     answer.vote(voter, voteType, this.policy);
   }
 
-
   voteQuestionComment(
     questionId: string,
     commentId: string,
@@ -149,7 +160,6 @@ class StackOverFlow {
 
     comment.vote(voter, voteType, this.policy);
   }
-
 
   voteAnswerComment(
     questionId: string,
@@ -182,7 +192,6 @@ class StackOverFlow {
     comment.vote(voter, voteType, this.policy);
   }
 
-
   acceptAnswer(questionId: string, answerId: string, questionOwner: User) {
     const question = this.questions.get(questionId);
     if (!question) {
@@ -197,7 +206,6 @@ class StackOverFlow {
     question.acceptAnswer(answerId, questionOwner);
   }
 
-
   unacceptAnswer(questionId: string, questionOwner: User) {
     const question = this.questions.get(questionId);
     if (!question) {
@@ -207,6 +215,10 @@ class StackOverFlow {
     question.unacceptAnswer(questionOwner);
   }
 
+  // just for testing
+  showQuetion(questionid: string) {
+    console.dir(this.questions.get(questionid),{ depth: null, colors: true });
+  }
 }
 
 export { StackOverFlow };
