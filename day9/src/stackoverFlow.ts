@@ -205,7 +205,7 @@ class StackOverFlow {
     }
     question.unacceptAnswer(questionOwner);
   }
-  
+
 }
 
 export { StackOverFlow };

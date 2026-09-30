@@ -3,6 +3,7 @@ import { PrivillegePolicy } from "./privillegePolicy";
 import { Tag } from "./tags";
 import { User } from "./user";
 
+let count = 0;
 type PostData = {
   id: string;
   body: string;
@@ -18,8 +19,32 @@ abstract class Post {
     public updatedAt: number = Date.now(),
   ) {}
 
-  vote(voter: User, VoteType: VoteType, policy: PrivillegePolicy) {}
-  getScore() {}
+  vote(voter: User, voteType: VoteType, policy: PrivillegePolicy) {
+    const allowed = policy.validateVote(voter, this, voteType);
+    if (!allowed) {
+      console.log("cannot vote");
+      return;
+    }
+
+    const prevVote = this.votes.get(voter.id);
+    this.votes.set(voter.id, voteType);
+
+    // after voting we also have to add repution
+
+    if (!prevVote) {
+      if (voteType === VoteType.UPVOTE) {
+        this.createdBy.addReputation(10);
+      }
+
+      if (voteType === VoteType.DOWNVOTE) {
+        this.createdBy.addReputation(-10);
+      }
+    }
+  }
+  getScore() {
+    const score = [...this.votes.values()].reduce((total , vote)=>total += vote,0)
+    console.log(score)
+  }
 }
 
 class Question extends Post {
@@ -49,10 +74,54 @@ class Question extends Post {
     author: User,
     body: string,
     policy: PrivillegePolicy,
-  ) {}
-  acceptAnswer(answerId: string, questionOwner: User) {}
-  unacceptAnswer(questionOwner: User) {}
-  getAnswerForDisplay() {}
+  ) {
+    const answer = this.answers.get(answerId);
+    if (!answer) {
+      console.log("answer not found");
+      return;
+    }
+    if (!policy.validateComment(author, answer)) {
+      return;
+    }
+    const commentId = `ca-${count}`;
+    count += 1;
+    const newComment = new Comment({
+      id: commentId,
+      body,
+      createdBy: author,
+    });
+    answer.addComment(newComment);
+  }
+  acceptAnswer(answerId: string, questionOwner: User) {
+    if (this.createdBy.id !== questionOwner.id) {
+      console.log("only question owner can accept answerrr");
+      return;
+    }
+    const answer = this.answers.get(answerId);
+    if (!answer) {
+      console.log("answer not found");
+      return;
+    }
+    this.acceptedAnswerId = answer.id;
+  }
+
+  unacceptAnswer(questionOwner: User) {
+    if (this.createdBy.id !== questionOwner.id) {
+      console.log("the question is not owned by the user");
+      return;
+    }
+
+    this.acceptedAnswerId = null;
+  }
+  getAnswerForDisplay() {
+    if (this.acceptedAnswerId === null) {
+      console.log("no answer have been selected yet");
+
+      return;
+    }
+    const answer = this.answers.get(this.acceptedAnswerId);
+    console.log(answer?.body);
+  }
 }
 
 class Answer extends Post {

@@ -5,8 +5,10 @@ import { User } from "./user";
 class PrivillegePolicy {
   constructor() {}
 
-  validateComment(user: User, post: Post) {}
-  validateVote(user: User, post: Post, VoteType: VoteType) {}
+  validateComment(user: User, post: Post):boolean {
+    
+  }
+  validateVote(user: User, post: Post, VoteType: VoteType):boolean {}
 }
 
 
