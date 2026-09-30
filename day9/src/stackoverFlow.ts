@@ -1,13 +1,17 @@
 import { randomUUIDv7 } from "crypto";
-import { Answer, Comment, Question } from "./post";
-import { User } from "./user";
 import { VoteType } from "../types";
+import { Answer, Comment, Question } from "./post";
+import { PrivillegePolicy } from "./privillegePolicy";
+import { User } from "./user";
 
-
-let count = 1
+let count = 1;
 class StackOverFlow {
   public users: Map<string, User> = new Map();
   public questions: Map<string, Question> = new Map();
+
+  constructor(private policy: PrivillegePolicy) {
+    this.policy = policy;
+  }
 
   createUser(name: string): User {
     // generateId
@@ -20,7 +24,7 @@ class StackOverFlow {
 
   createQuestion(title: string, body: string, author: User) {
     const questionId = `q-${count}`;
-    count+=1;
+    count += 1;
 
     const newQuestion = new Question(title, {
       id: questionId,
@@ -38,7 +42,7 @@ class StackOverFlow {
       return;
     }
     const answerId = `a-${count}`;
-    count+=1;
+    count += 1;
 
     const newAnswer = new Answer({ id: answerId, body, createdBy: author });
     question.addAnswer(newAnswer);
@@ -51,7 +55,7 @@ class StackOverFlow {
       return;
     }
     const commentId = `cq-${count}`;
-    count+=1;
+    count += 1;
 
     const newComment = new Comment({
       id: commentId,
@@ -81,7 +85,7 @@ class StackOverFlow {
     }
 
     const commentId = `ca-${count}`;
-    count+=1;
+    count += 1;
     const newComment = new Comment({
       id: commentId,
       body,
@@ -90,14 +94,118 @@ class StackOverFlow {
     answer.addComment(newComment);
   }
 
-  voteQuestion(questionId : string , voter : User , VoteType :VoteType){}
-  voteAnswer(questionId:string , answerId:string , voter :User ,VoteType:VoteType ){}
-  voteQuestionComment(questionId:string , commentId:string , voter:User , VoteType:VoteType){}
-  voteAnswerComment(questionId:string , answerId:string , voter:User , VoteType:VoteType){}
-  acceptAnswer(questionId:string , answerId:string , questionOwner:User){}
-  unacceptAnswer(questionId:string,questionOwner:User){}
+  voteQuestion(questionId: string, voter: User, voteType: VoteType) {
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found ");
+      return;
+    }
+    question.vote(voter, voteType, this.policy);
+  }
+
+  voteAnswer(
+    questionId: string,
+    answerId: string,
+    voter: User,
+    voteType: VoteType,
+  ) {
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found ");
+      return;
+    }
+
+    const answer = question.answers.get(answerId);
+    if (!answer) {
+      console.log("answer not found ");
+      return;
+    }
+
+    answer.vote(voter, voteType, this.policy);
+  }
 
 
+  voteQuestionComment(
+    questionId: string,
+    commentId: string,
+    voter: User,
+    voteType: VoteType,
+  ) {
+    if (voteType == VoteType.DOWNVOTE) {
+      console.log("comments cannot be downvoted");
+      return;
+    }
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found ");
+      return;
+    }
+    const comment = question.comments.get(commentId);
+    if (!comment) {
+      console.log("comment not found");
+      return;
+    }
+
+    comment.vote(voter, voteType, this.policy);
+  }
+
+
+  voteAnswerComment(
+    questionId: string,
+    answerId: string,
+    commentId: string,
+    voter: User,
+    voteType: VoteType,
+  ) {
+    if (voteType === VoteType.DOWNVOTE) {
+      console.log("cannot downvote the comment ");
+      return;
+    }
+
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found");
+      return;
+    }
+
+    const answer = question.answers.get(answerId);
+    if (!answer) {
+      console.log("answer not found ");
+      return;
+    }
+    const comment = answer.comments.get(commentId);
+    if (!comment) {
+      console.log("comment not found");
+      return;
+    }
+    comment.vote(voter, voteType, this.policy);
+  }
+
+
+  acceptAnswer(questionId: string, answerId: string, questionOwner: User) {
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found");
+      return;
+    }
+    const answer = question.answers.get(answerId);
+    if (!answer) {
+      console.log("answer not found");
+      return;
+    }
+    question.acceptAnswer(answerId, questionOwner);
+  }
+
+
+  unacceptAnswer(questionId: string, questionOwner: User) {
+    const question = this.questions.get(questionId);
+    if (!question) {
+      console.log("question not found");
+      return;
+    }
+    question.unacceptAnswer(questionOwner);
+  }
+  
 }
 
 export { StackOverFlow };

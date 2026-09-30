@@ -1,4 +1,5 @@
 import { Question } from "./post"
+import { PrivillegePolicy } from "./privillegePolicy"
 import { StackOverFlow } from "./stackoverFlow"
 import { User } from "./user"
 
@@ -7,7 +8,7 @@ console.log("stack overflowwww")
 
 // lets test is it working or not
 
-const system = new StackOverFlow()
+const system = new StackOverFlow(new PrivillegePolicy())
 
 // create users
 

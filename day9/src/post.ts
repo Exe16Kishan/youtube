@@ -9,7 +9,7 @@ type PostData = {
   createdBy: User;
 };
 abstract class Post {
-  votes: Map<string, VoteType> = new Map();
+  private votes: Map<string, VoteType> = new Map();
   constructor(
     public id: string,
     public body: string,
