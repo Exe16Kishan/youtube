@@ -1,0 +1,1 @@
+export type Coin = "PENNY" | "NICKEL" | "QUARTER" | "DIME"
