@@ -17,6 +17,8 @@ export class Inventry {
     }
     this.stockMap.set(code, currentStock - 1);
   }
+
+  // it is sending item
   getItem(code: string): Item {
     const item = this.itemMap.get(code);
     if (!item) {

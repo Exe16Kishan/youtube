@@ -12,7 +12,9 @@ interface VendingMachineState {
 class DispensingState implements VendingMachineState {
   constructor(public machine: VendingMachine) {}
   selectItem(code: string): void {}
-  dispense(): void {}
+  dispense(): void {
+    this.machine.dispenseItem()
+  }
   insertCoin(coin: Coin): void {}
   refund(): void {}
 }
@@ -21,7 +23,10 @@ class HasMoneyState implements VendingMachineState {
   constructor(public machine: VendingMachine) {}
   selectItem(code: string): void {}
   dispense(): void {}
-  insertCoin(coin: Coin): void {}
+  insertCoin(coin: Coin): void {
+    console.log(coin)
+    this.machine.addBalance(coin)
+  }
   refund(): void {}
 }
 
@@ -35,7 +40,9 @@ class IdleState implements VendingMachineState {
 
 class ItemSelectedState implements VendingMachineState {
   constructor(public machine: VendingMachine) {}
-  selectItem(code: string): void {}
+  selectItem(code: string): void {
+    this.machine.selectedItemCode = this.machine.inventry.getItem(code).code
+  }
   dispense(): void {}
   insertCoin(coin: Coin): void {}
   refund(): void {}

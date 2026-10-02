@@ -1,16 +1,17 @@
 import { Inventry } from "./inventry";
 import { Item } from "./item";
 import { Coin } from "./types";
-import { IdleState, VendingMachineState } from "./vendingMachineState";
+import { DispensingState, HasMoneyState, IdleState, ItemSelectedState, VendingMachineState } from "./vendingMachineState";
 
 export class VendingMachine {
   idleState: VendingMachineState = new IdleState(this);
-  constructor(
-    public currentState: VendingMachineState,
-    public inventry: Inventry,
-    public balance: number,
-    public selectedItemCode: string | null,
-  ) {
+
+  public currentState: VendingMachineState;
+  public inventry: Inventry;
+  public balance: number;
+  public selectedItemCode: string | null;
+
+  constructor() {
     this.inventry = new Inventry();
     this.balance = 0;
     this.selectedItemCode = null;
@@ -18,6 +19,7 @@ export class VendingMachine {
   }
 
   insertCoin(coin: Coin) {
+    this.currentState = new HasMoneyState(this)
     this.currentState.insertCoin(coin);
   }
 
@@ -41,6 +43,7 @@ export class VendingMachine {
   }
 
   selectItem(code: string): void {
+    this.currentState = new ItemSelectedState(this) // so when someone select item the state will b itemselectedState
     this.currentState.selectItem(code);
   }
 
@@ -70,14 +73,16 @@ export class VendingMachine {
 
     if (this.balance > 0) {
       // we should refund the balance money
+      console.log(`collect the remaining balance ${this.balance}`)
       this.refundBalance();
     }
     // change the state to idle
-
+    console.log("collect the item")
     this.reset();
   }
 
   dispense() {
+    this.currentState = new DispensingState(this)
     this.currentState.dispense();
   }
 
@@ -95,4 +100,3 @@ export class VendingMachine {
     this.selectedItemCode = code;
   }
 }
-
