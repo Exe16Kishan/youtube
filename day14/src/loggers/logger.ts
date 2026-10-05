@@ -8,7 +8,6 @@ class Logger {
   constructor(
     private name: string,
     private level: LogLevel,
-    // private additivity: boolean = true,
   ) {}
 
   addAppender(newAppender: LogAppenderType): void {
@@ -19,16 +18,6 @@ class Logger {
       appender.append(logMessage);
     }
   }
-  // getEffectiveLevel(): LogLevel {
-  //           if (this.level !== undefined) {
-  //             return this.level
-  //           }
-
-  //           return this.
-  // }
-  
-  // setAdditivity(additivity: boolean): void {}
-
 
   log(logLevel: LogLevel, message: string): void {
     const newLogMessage = new LogMessage(logLevel, message, new Date());
@@ -51,3 +40,8 @@ class Logger {
     this.log(LogLevel.DEBUG, message);
   }
 }
+
+
+// it works as singleton in nodeJs 
+const simpleLogger = new Logger("simple", LogLevel.DEBUG);
+export { simpleLogger };
