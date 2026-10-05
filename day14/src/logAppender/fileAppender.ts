@@ -4,11 +4,19 @@ import { LogAppenderType } from "./logAppenderType";
 
 class FileAppender implements LogAppenderType {
   constructor(private formatter: LogFormatterType) {}
-  setFormatter(logFormatter: LogFormatterType): void {}
+  setFormatter(logFormatter: LogFormatterType): void {
+    this.formatter = logFormatter
+  }
 
-  getFormatter(): LogFormatterType {}
+  getFormatter(): LogFormatterType {
+    return this.formatter
+  }
 
-  append(logMessage: LogMessage): void {}
+  append(logMessage: LogMessage): void {
+    const formatMessage = this.formatter.format(logMessage)
+    console.log("log message has been saved in file")
+    console.log(formatMessage)
+  }
   close(): void {}
 }
 

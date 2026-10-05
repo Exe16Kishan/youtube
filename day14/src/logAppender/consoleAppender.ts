@@ -4,12 +4,21 @@ import { LogAppenderType } from "./logAppenderType";
 
 class ConsoleAppender implements LogAppenderType {
   constructor(private formatter: LogFormatterType) {}
-  setFormatter(logFormatter: LogFormatterType): void {}
+  setFormatter(logFormatter: LogFormatterType): void {
+    this.formatter = logFormatter
+  }
 
-  getFormatter(): LogFormatterType {}
+  getFormatter(): LogFormatterType {
+    return this.formatter
+  }
 
-  append(logMessage: LogMessage): void {}
-  close(): void {}
+  append(logMessage: LogMessage): void {
+    const formatMessage = this.formatter.format(logMessage)
+    console.log(formatMessage)
+  }
+  close(): void {
+    
+  }
 }
 
 export {
