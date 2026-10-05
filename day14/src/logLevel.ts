@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 export enum LogLevel {
   DEBUG ="DEBUG" ,
   INFO = "INFO",
@@ -5,3 +7,4 @@ export enum LogLevel {
   ERROR ="ERROR",
   FATAL = "FATAL",
 }
+

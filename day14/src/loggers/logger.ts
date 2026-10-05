@@ -1,6 +1,9 @@
+import chalk from "chalk";
 import { LogAppenderType } from "../logAppender/logAppenderType";
 import { LogLevel } from "../logLevel";
 import { LogMessage } from "../logMessage";
+
+
 
 class Logger {
   private appenders: LogAppenderType[] = [];
@@ -41,7 +44,6 @@ class Logger {
   }
 }
 
-
-// it works as singleton in nodeJs 
+// it works as singleton in nodeJs
 const simpleLogger = new Logger("simple", LogLevel.DEBUG);
 export { simpleLogger };
